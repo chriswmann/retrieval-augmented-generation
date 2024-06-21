@@ -66,6 +66,10 @@ def main() -> None:
     art_page_category: str = "painting"
     docs += generate_documents(wiki, art_page_title, art_page_category)
 
+    election_page_title: str = "2024_Indian_general_election"
+    election_page_category: str = "politics"
+    docs += generate_documents(wiki, election_page_title, election_page_category)
+
     db_uri = "./data/lancedb"
     db: lancedb.DBConnection = get_db(uri=db_uri)
     table: lancedb.table.Table = get_table(
@@ -73,7 +77,7 @@ def main() -> None:
     )
     table.add(docs)
 
-    query: str = "Who is Maru?"
+    query: str = "Who won the election in India in 2024?"
 
     rag_result: LanceModel = table.search(query).limit(1).to_pydantic(Document)[0]
     rag_text: str = rag_result.text  # type: ignore[report-attribute-access-issue]

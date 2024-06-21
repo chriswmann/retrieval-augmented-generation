@@ -24,20 +24,47 @@ class Document(LanceModel):
     category: str
 
 
+def generate_documents(
+    wiki: Wikipedia, page_title: str, page_cateogry: str
+) -> list[dict[str, str]]:
+    return [
+        {"text": x[0], "category": page_cateogry}
+        for x in [wiki.page(page_title).text.split("\n\n")]
+    ]
+
+
+def get_db(uri: str) -> lancedb.DBConnection:
+    return lancedb.connect(uri)
+
+
+def get_table(
+    db: lancedb.DBConnection,
+    table_name: str,
+    schema: type[LanceModel],
+    drop_table: bool = False,
+    exist_ok: bool = True,
+) -> lancedb.table.Table:
+    if drop_table:
+        db.drop_table(table_name)
+    return db.create_table(table_name, schema=schema, exist_ok=exist_ok)
+
+
 def main() -> None:
     wiki: Wikipedia = Wikipedia("RAGBot9000", "en")
-    docs: list[dict[str, str]] = [
-        {"text": x[0], "category": "cat"}
-        for x in [wiki.page("Maru (cat)").text.split("\n\n")]
-    ]
-    docs += [
-        {"text": x[0], "category": "painting"}
-        for x in [wiki.page("Venus_Anadyomene_(Titian)").text.split("\n\n")]
-    ]
-    uri = "./data/lancedb"
-    db: lancedb.DBConnection = lancedb.connect(uri)
-    db.drop_table("documents")
-    table = db.create_table("documents", schema=Document, exist_ok=True)
+    maru_page_title: str = "Maru (cat)"
+    maru_page_category: str = "cat"
+    docs: list[dict[str, str]] = generate_documents(
+        wiki, maru_page_title, maru_page_category
+    )
+    art_page_title: str = "Venus Anadyomene (Titian)"
+    art_page_category: str = "painting"
+    docs += generate_documents(wiki, art_page_title, art_page_category)
+
+    db_uri = "./data/lancedb"
+    db: lancedb.DBConnection = get_db(uri=db_uri)
+    table: lancedb.table.Table = get_table(
+        db=db, table_name="docs", schema=Document, drop_table=True, exist_ok=True
+    )
     table.add(docs)
 
     query: str = "Who is Maru?"

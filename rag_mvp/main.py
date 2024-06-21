@@ -11,7 +11,6 @@ from wikipediaapi import Wikipedia
 from rag_mvp.llm import chat
 
 MODEL_NAME: str = "BAAI/bge-m3"
-# MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 model = (
@@ -19,7 +18,7 @@ model = (
 )
 
 
-class Document(LanceModel, arbitrary_types_allowed=True):
+class Document(LanceModel):
     text: str = model.SourceField()
     vector: Vector(model.ndims()) = model.VectorField()  # type: ignore[report-invalid-type-form]
     category: str
@@ -27,7 +26,7 @@ class Document(LanceModel, arbitrary_types_allowed=True):
 
 def main() -> None:
     wiki: Wikipedia = Wikipedia("RAGBot9000", "en")
-    docs = [
+    docs: list[dict[str, str]] = [
         {"text": x[0], "category": "cat"}
         for x in [wiki.page("Maru (cat)").text.split("\n\n")]
     ]
@@ -43,7 +42,7 @@ def main() -> None:
 
     query: str = "Who is Maru?"
 
-    actual = table.search(query).limit(1).to_pydantic(Document)[0]
+    actual: LanceModel = table.search(query).limit(1).to_pydantic(Document)[0]
     actual_text: str = actual.text  # type: ignore[report-attribute-access-issue]
 
     prompt_format: str = """
@@ -54,7 +53,7 @@ def main() -> None:
         {}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
     """
 
-    system_prompt: str = """You are an extremely knowledgable expert.
+    system_prompt: str = f"""You are an extremely knowledgable expert.
     You always provide the most accurate information in a succinct manner.
     If you don't know the answer to something, you are honest about it.
 

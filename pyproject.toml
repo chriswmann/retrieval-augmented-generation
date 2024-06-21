@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "rag-mvp"
+version = "0.1.0"
+description = ""
+authors = ["Chris Mann"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+lancedb = "^0.8.2"
+Wikipedia-API = "^0.6.0"
+numpy = "^1.26.4"
+sentence-transformers = "^3.0.1"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.10"
+basedpyright = "^1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

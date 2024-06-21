@@ -13,6 +13,7 @@ Wikipedia-API = "^0.6.0"
 numpy = "^1.26.4"
 sentence-transformers = "^3.0.1"
 tantivy = "^0.22.0"
+ollama = "^0.2.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.10"

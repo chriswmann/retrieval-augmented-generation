@@ -24,8 +24,23 @@ concise form) and then provide your answer.
 
 
 async def chat(async_client: AsyncClient, chat_content: str) -> None:
-    """
-    Stream a chat from Llama using the AsyncClient.
+    """Stream a chat from Llama with a nice 'real-time' output to the console.
+
+    We use the AsyncClient to get a stream of responses from the Llama model, partly
+    because the resulting effect is similar to real services such as chat.openai.com
+    but primarily because this helps mask the latency of the model, since it is
+    being run locally on a CPU.
+
+    Parameters
+    ----------
+    async_client : AsyncClient
+        The asynchronous client used to communicate with the Llama model.
+    chat_content : str
+        The content of the chat message to send to the model.
+
+    Returns
+    -------
+    None
     """
     message = {
         "role": "user",

@@ -35,6 +35,9 @@ def generate_documents(
 ) -> list[dict[str, str]]:
     """Generate documents from a Wikipedia page, using the wikipediaapi library.
 
+    The page is identified via the page title at the moment. This is OK for the MVP
+    but it would be better to use a more robust identifier, if possible (perhaps the URL).
+
     Parameters
     ----------
     wiki : Wikipedia
@@ -48,7 +51,7 @@ def generate_documents(
     Returns
     -------
     list[dict[str, str]]
-        _description_
+        Documents (paragraphs) with categories for the given Wikipedia page.
     """
     return [
         {"text": x[0], "category": page_cateogry}
